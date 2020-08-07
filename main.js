@@ -123,7 +123,14 @@ healthcheck(callback) {
       * If an optional IAP callback function was passed to
       * healthcheck(), execute it passing the error seen as an argument
       * for the callback's errorMessage parameter.
-      */
+      */ 
+
+this.emitOffline();
+ log.error(`ServiceNow: Instance is unavailable. ID: stever ${JSON.stringify(error)}`); // for debugging
+ // log.error('ServiceNow: Instance is unavailable. ID:') //+ this.id);
+ return error;
+
+
    } else {
      /**
       * Write this block.
@@ -136,7 +143,7 @@ healthcheck(callback) {
       * responseData parameter.
       */
    }
- });
+     });
 }
 
   /**
