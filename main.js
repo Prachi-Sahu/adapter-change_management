@@ -83,17 +83,7 @@ class ServiceNowAdapter extends EventEmitter {
     this.healthcheck();
   }
 
-  /**
-   * @memberof ServiceNowAdapter
-   * @method healthcheck
-   * @summary Check ServiceNow Health
-   * @description Verifies external system is available and healthy.
-   *   Calls method emitOnline if external system is available.
-   *
-   * @param {ServiceNowAdapter~requestCallback} [callback] - The optional callback
-   *   that handles the response.
-   */
- /**
+/**
  * @memberof ServiceNowAdapter
  * @method healthcheck
  * @summary Check ServiceNow Health
@@ -123,13 +113,11 @@ healthcheck(callback) {
       * If an optional IAP callback function was passed to
       * healthcheck(), execute it passing the error seen as an argument
       * for the callback's errorMessage parameter.
-      */ 
-
-this.emitOffline();
- log.error(`ServiceNow: Instance is unavailable. ID: stever ${JSON.stringify(error)}`); // for debugging
- // log.error('ServiceNow: Instance is unavailable. ID:') //+ this.id);
- return error;
-
+      */
+        this.emitOffline();
+        log.error(`ServiceNow: Instance is unavailable.  ID: stever ${JSON.stringify(error)}`); // for debugging
+        // log.error('ServiceNow: Instance is unavailable.  ID:') //+ this.id);
+        return error;
 
    } else {
      /**
@@ -142,8 +130,11 @@ this.emitOffline();
       * parameter as an argument for the callback function's
       * responseData parameter.
       */
+        this.emitOnline()
+        // log.info(`ServiceNow: Instance is available.  ID: stever ${JSON.stringify(result)}`); // for debugging
+        return result;
    }
-     });
+ });
 }
 
   /**
@@ -155,7 +146,8 @@ this.emitOffline();
    */
   emitOffline() {
     this.emitStatus('OFFLINE');
-    log.warn('ServiceNow: Instance is unavailable.');
+    // log.warn('ServiceNow: Instance is unavailable.');
+    log.error(`ServiceNow: Instance is unavailable.  ID: stever ${this.id}`); // for debugging
   }
 
   /**
@@ -167,7 +159,8 @@ this.emitOffline();
    */
   emitOnline() {
     this.emitStatus('ONLINE');
-    log.info('ServiceNow: Instance is available.');
+    // log.info('ServiceNow: Instance is available.');
+    log.info(`ServiceNow: Instance is available.  ID: stever ${this.id}`) // + String(this.id)); //+ this.id);
   }
 
   /**
@@ -199,7 +192,17 @@ this.emitOffline();
      * Note how the object was instantiated in the constructor().
      * get() takes a callback function.
      */
-  }
+      this.connector.get((data, error) => {
+        if (error) {
+          //console.error(`\nError returned from GET request:\n${JSON.stringify(error)}`);
+          return callback(error);
+        }
+        //console.log(`\nResponse returned from GET request:\n${JSON.stringify(data)}`);
+        
+        return callback(data);
+      });
+    }    
+    
 
   /**
    * @memberof ServiceNowAdapter
@@ -217,7 +220,16 @@ this.emitOffline();
      * Note how the object was instantiated in the constructor().
      * post() takes a callback function.
      */
-  }
-}
+      this.post((data, error) => {
+          if (error) {
+            // console.error(`\nError returned from POST request:\n${JSON.stringify(error)}`);
+            return callback(error);
+          }
+          // console.log(`\nResponse returned from POST request:\n${JSON.stringify(data)}`);
+          return callback(data);
+        });    
+    }
 
+
+}
 module.exports = ServiceNowAdapter;
