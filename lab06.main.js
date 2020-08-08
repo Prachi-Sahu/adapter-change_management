@@ -83,7 +83,17 @@ class ServiceNowAdapter extends EventEmitter {
     this.healthcheck();
   }
 
-/**
+  /**
+   * @memberof ServiceNowAdapter
+   * @method healthcheck
+   * @summary Check ServiceNow Health
+   * @description Verifies external system is available and healthy.
+   *   Calls method emitOnline if external system is available.
+   *
+   * @param {ServiceNowAdapter~requestCallback} [callback] - The optional callback
+   *   that handles the response.
+   */
+ /**
  * @memberof ServiceNowAdapter
  * @method healthcheck
  * @summary Check ServiceNow Health
@@ -113,11 +123,13 @@ healthcheck(callback) {
       * If an optional IAP callback function was passed to
       * healthcheck(), execute it passing the error seen as an argument
       * for the callback's errorMessage parameter.
-      */
-        this.emitOffline();
-        log.error(`ServiceNow: Instance is unavailable.  ID: stever ${JSON.stringify(error)}`); // for debugging
-        // log.error('ServiceNow: Instance is unavailable.  ID:') //+ this.id);
-        return error;
+      */ 
+
+this.emitOffline();
+ log.error(`ServiceNow: Instance is unavailable. ID: stever ${JSON.stringify(error)}`); // for debugging
+ // log.error('ServiceNow: Instance is unavailable. ID:') //+ this.id);
+ return error;
+
 
    } else {
      /**
@@ -130,11 +142,8 @@ healthcheck(callback) {
       * parameter as an argument for the callback function's
       * responseData parameter.
       */
-        this.emitOnline()
-        // log.info(`ServiceNow: Instance is available.  ID: stever ${JSON.stringify(result)}`); // for debugging
-        return result;
    }
- });
+     });
 }
 
   /**
@@ -146,8 +155,7 @@ healthcheck(callback) {
    */
   emitOffline() {
     this.emitStatus('OFFLINE');
-    // log.warn('ServiceNow: Instance is unavailable.');
-    log.error(`ServiceNow: Instance is unavailable.  ID: stever ${this.id}`); // for debugging
+    log.warn('ServiceNow: Instance is unavailable.');
   }
 
   /**
@@ -159,8 +167,7 @@ healthcheck(callback) {
    */
   emitOnline() {
     this.emitStatus('ONLINE');
-    // log.info('ServiceNow: Instance is available.');
-    log.info(`ServiceNow: Instance is available.  ID: stever ${this.id}`) // + String(this.id)); //+ this.id);
+    log.info('ServiceNow: Instance is available.');
   }
 
   /**
@@ -192,32 +199,7 @@ healthcheck(callback) {
      * Note how the object was instantiated in the constructor().
      * get() takes a callback function.
      */
-
-      this.connector.get((data, error) => {
-        if (error) {
-          callback(data, error);
-           console.error(`\nError returned from GET request:\n${JSON.stringify(error)}`);
-        } else {
-            console.log(`\nResponse returned from GET request:\n${JSON.stringify(data)}`)
-            if (data.hasOwnProperty('body')) {
-              var body_array = (JSON.parse(data.body));
-              var num_results = body_array.result.length;
-              var changeTicket = [];
-
-              for(var i = 0; i < num_results; i += 1) {
-                var result_array = (JSON.parse(data.body).result);
-                changeTicket.push({"change_ticket_number" : result_array[i].number, "active" : result_array[i].active, "priority" : result_array[i].priority,
-                                   "description" : result_array[i].description, "work_start" : result_array[i].work_start, "work_end" : result_array[i].work_end,
-                                   "change_ticket_key" : result_array[i].sys_id});
-              } 
-              
-              callback(changeTicket, error); 
-            }
-            
-          } 
-      });
-    }    
-    
+  }
 
   /**
    * @memberof ServiceNowAdapter
@@ -235,25 +217,7 @@ healthcheck(callback) {
      * Note how the object was instantiated in the constructor().
      * post() takes a callback function.
      */
-      this.connector.post((data, error) => {
-          if (error) {
-            console.error(`\nError returned from POST request:\n${JSON.stringify(error)}`);
-            callback(data, error);
-          } else {
-              console.log(`\nResponse returned from GET request:\n${JSON.stringify(data)}`)
-            if (data.hasOwnProperty('body')) {
-              var changeTicket = {};
-              var result_array = (JSON.parse(data.body).result);
-              changeTicket = ({"change_ticket_number" : result_array.number, "active" : result_array.active, "priority" : result_array.priority,
-                                   "description" : result_array.description, "work_start" : result_array.work_start, "work_end" : result_array.work_end,
-                                   "change_ticket_key" : result_array.sys_id});
-                console.log('changeTicket get', changeTicket)
-              callback(changeTicket, error); 
-            } 
-           }            
-        });    
-    }
-
-
+  }
 }
+
 module.exports = ServiceNowAdapter;
